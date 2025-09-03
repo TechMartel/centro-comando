@@ -1,19 +1,35 @@
 # 1. Importamos la clase FastAPI desde la librería fastapi
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware # Nueva importación
 
 # 2. Creamos una instancia de la aplicación
 app = FastAPI()
 
-# 3. Definimos un "decorador" de ruta.
-#    Esto le dice a FastAPI que la función de abajo
-#    se encargará de las peticiones que vayan a:
-#    - la ruta raíz ("/")
-#    - usando un método GET
+# 3. Lista de orígenes permitidos (los "domicilios" de confianza)
+#    Por ahora, solo permitimos nuestro servidor de desarrollo de React.
+origins = [
+    "http://localhost:5173",
+    "http://127.0.0.1:5173",
+]
+
+# 4. Añadimos el middleware de CORS a la aplicación.
+#    Este es el "guardia de seguridad" que añade los permisos.
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Permitir orígenes específicos
+    allow_credentials=True, # Permitir cookies (lo usaremos más adelante)
+    allow_methods=["*"],    # Permitir todos los métodos (GET, POST, etc.)
+    allow_headers=["*"],    # Permitir todas las cabeceras
+)
+
+
+# 5. Nuestra ruta raíz (sin cambios)
 @app.get("/")
 def read_root():
     """
     Esta función se ejecutará cuando alguien visite la URL principal.
     """
-    # 4. Devolvemos un diccionario que FastAPI convertirá a JSON.
-    return {"message1": "¡API del Centro de Comando Online!"}
+    return {"message": "¡API del Centro de Comando Online! (con CORS habilitado)"}
+
+
 

@@ -9,3 +9,5 @@ venv/
 # Archivos de caché de Python
 # Ignorar las carpetas de caché que Python crea automáticamente
 __pycache__/
+
+*.env*

@@ -1,6 +1,7 @@
 # 1. Importamos la clase FastAPI desde la librería fastapi
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware # Nueva importación
+import os  # Nueva importación para leer variables de entorno
 
 # 2. Creamos una instancia de la aplicación
 app = FastAPI()
@@ -11,6 +12,13 @@ origins = [
     "http://localhost:5173",
     "http://127.0.0.1:5173",
 ]
+
+# Leemos la URL del frontend en producción desde una variable de entorno.
+# Si la variable FRONTEND_URL existe (la configuraremos en Render),
+# la añadimos a nuestra lista de orígenes permitidos.
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+if FRONTEND_URL:
+    origins.append(FRONTEND_URL)
 
 # 4. Añadimos el middleware de CORS a la aplicación.
 #    Este es el "guardia de seguridad" que añade los permisos.

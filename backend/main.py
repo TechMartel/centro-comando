@@ -37,7 +37,7 @@ def read_root():
     """
     Esta función se ejecutará cuando alguien visite la URL principal.
     """
-    return {"message": "¡API del Centro de Comando Online! (con CORS habilitado)"}
+    return {"message": "¡API del Centro de Comando Online! (con CORS habilitado) modificacion rama"}
 
 
 

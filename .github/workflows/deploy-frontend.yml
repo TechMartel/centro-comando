@@ -23,7 +23,8 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '18' # Puedes usar una versión más reciente si quieres
+          # CORRECCIÓN: Actualizamos la versión de Node.js a la 20, como requiere Vite.
+          node-version: '20'
 
       # 3. Entra en la carpeta frontend e instala las dependencias
       - name: Install dependencies

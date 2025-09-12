@@ -39,13 +39,15 @@ jobs:
 
       # 5. Sube los archivos compilados a Hostinger vía SFTP
       - name: Deploy to Hostinger via SFTP
-        # CORRECCIÓN FINAL: Usamos una versión etiquetada específica para mayor estabilidad
-        uses: appleboy/sftp-action@v0.1.15
+        # CORRECCIÓN FINAL: Usamos una acción robusta y le especificamos el protocolo SFTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
         with:
           # Servidor, usuario y contraseña leídos desde los "Secrets" de GitHub
-          host: ${{ secrets.FTP_SERVER }}
+          server: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          protocol: sftp # ¡Importante! Forzamos el uso de SFTP
           port: 22 # Puerto estándar para SFTP
-          source: 'frontend/dist/*' # Origen: Todo el contenido dentro de la carpeta dist
-          target: 'public_html' # Destino: La raíz del sitio web en Hostinger
+          local-dir: ./frontend/dist/ # Origen: El contenido de la carpeta dist
+          server-dir: public_html/ # Destino: La raíz del sitio web en Hostinger
+

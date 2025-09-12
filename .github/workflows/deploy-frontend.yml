@@ -1,0 +1,51 @@
+# Nombre del flujo de trabajo, aparecerá en la pestaña "Actions" de GitHub
+name: Deploy Frontend to Hostinger
+
+# Disparador: Este flujo se ejecuta cada vez que hay un push a la rama "main"
+on:
+  push:
+    branches:
+      - main
+
+# Trabajos: Lista de tareas que el robot debe ejecutar
+jobs:
+  build-and-deploy:
+    # El tipo de máquina que usará el robot (Ubuntu es estándar)
+    runs-on: ubuntu-latest
+
+    # Pasos: La secuencia de acciones a realizar
+    steps:
+      # 1. Descarga el código del repositorio a la máquina del robot
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Configura Node.js para que podamos usar npm
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Puedes usar una versión más reciente si quieres
+
+      # 3. Entra en la carpeta frontend e instala las dependencias
+      - name: Install dependencies
+        run: |
+          cd frontend
+          npm install
+
+      # 4. Construye la aplicación de producción
+      - name: Build application
+        run: |
+          cd frontend
+          npm run build
+
+      # 5. Sube los archivos compilados a Hostinger vía FTP
+      - name: Deploy to Hostinger via FTP
+        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+        with:
+          # Servidor, usuario y contraseña leídos desde los "Secrets" de GitHub
+          server: ${{ secrets.FTP_SERVER }}
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          # Carpeta de origen en el robot: el resultado de la compilación
+          local-dir: ./frontend/dist/
+          # Carpeta de destino en Hostinger: la raíz del sitio web
+          server-dir: ./public_html/

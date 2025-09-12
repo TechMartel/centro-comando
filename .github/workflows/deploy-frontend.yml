@@ -39,14 +39,13 @@ jobs:
 
       # 5. Sube los archivos compilados a Hostinger vía SFTP
       - name: Deploy to Hostinger via SFTP
-        # CORRECCIÓN: Cambiamos a una acción de SFTP más popular y mantenida
-        uses: wlixcc/SFTP-Deploy-Action@v1.2.1
+        # CORRECCIÓN FINAL: Cambiamos a la acción SFTP más popular y confiable
+        uses: appleboy/sftp-action@master
         with:
           # Servidor, usuario y contraseña leídos desde los "Secrets" de GitHub
-          server: ${{ secrets.FTP_SERVER }}
+          host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
-          # Carpeta de origen en el robot: el resultado de la compilación
-          local-path: './frontend/dist/'
-          # Carpeta de destino en Hostinger: la raíz del sitio web
-          remote-path: './public_html'
+          port: 22 # Puerto estándar para SFTP
+          source: 'frontend/dist/*' # Origen: Todo el contenido dentro de la carpeta dist
+          target: 'public_html' # Destino: La raíz del sitio web en Hostinger

@@ -25,19 +25,24 @@ jobs:
         with:
           node-version: '20'
 
-      # 3. Entra en la carpeta frontend e instala las dependencias
+      # 3. Crea el archivo .env.production usando el secreto de GitHub
+      - name: Create .env file
+        run: |
+          echo "VITE_API_URL=${{ secrets.VITE_API_URL }}" > frontend/.env.production
+
+      # 4. Entra en la carpeta frontend e instala las dependencias
       - name: Install dependencies
         run: |
           cd frontend
           npm install
 
-      # 4. Construye la aplicación de producción
+      # 5. Construye la aplicación de producción
       - name: Build application
         run: |
           cd frontend
           npm run build
 
-      # 5. Configura la clave SSH y añade el host a los hosts conocidos
+      # 6. Configura la clave SSH y añade el host a los hosts conocidos
       - name: Setup SSH and Known Hosts
         run: |
           mkdir -p ~/.ssh/
@@ -45,7 +50,7 @@ jobs:
           chmod 600 ~/.ssh/id_rsa
           ssh-keyscan -p 65002 -H ${{ secrets.FTP_SERVER }} >> ~/.ssh/known_hosts
 
-      # 6. Sube los archivos compilados a Hostinger vía rsync (usando la ruta absoluta)
+      # 7. Sube los archivos compilados a Hostinger vía rsync (usando la ruta absoluta)
       - name: Deploy to Hostinger via rsync
         run: |
           # Usamos la ruta absoluta al directorio de destino para evitar ambigüedades.

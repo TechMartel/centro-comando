@@ -50,3 +50,4 @@ jobs:
           port: 22 # Puerto estándar para SFTP
           local-dir: ./frontend/dist/ # Origen: El contenido de la carpeta dist
           server-dir: public_html/ # Destino: La raíz del sitio web en Hostinger
+

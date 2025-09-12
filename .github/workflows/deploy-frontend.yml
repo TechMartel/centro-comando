@@ -39,8 +39,8 @@ jobs:
 
       # 5. Sube los archivos compilados a Hostinger vía SFTP
       - name: Deploy to Hostinger via SFTP
-        # CORRECCIÓN FINAL: Cambiamos a la acción SFTP más popular y confiable
-        uses: appleboy/sftp-action@master
+        # CORRECCIÓN FINAL: Usamos una versión etiquetada específica para mayor estabilidad
+        uses: appleboy/sftp-action@v0.1.15
         with:
           # Servidor, usuario y contraseña leídos desde los "Secrets" de GitHub
           host: ${{ secrets.FTP_SERVER }}

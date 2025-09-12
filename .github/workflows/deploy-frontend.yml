@@ -40,30 +40,16 @@ jobs:
       # 5. Configura la clave SSH y añade el host a los hosts conocidos
       - name: Setup SSH and Known Hosts
         run: |
-          # Carga la clave SSH privada de forma segura
           mkdir -p ~/.ssh/
           echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          # Añade la huella digital del servidor de Hostinger a la lista de hosts de confianza
-          # para evitar prompts interactivos. Usamos el puerto correcto 65002.
           ssh-keyscan -p 65002 -H ${{ secrets.FTP_SERVER }} >> ~/.ssh/known_hosts
 
-      # 6. PASO DE DEPURACIÓN 2: Listar contenido de la carpeta 'dist' local
-      - name: DEBUG - List local 'dist' directory contents
-        run: |
-          echo "Listando contenido de ./frontend/dist/ ..."
-          ls -la ./frontend/dist/
-
-      # 7. Sube los archivos compilados a Hostinger vía rsync
+      # 6. Sube los archivos compilados a Hostinger vía rsync (usando la ruta absoluta)
       - name: Deploy to Hostinger via rsync
         run: |
-          # Ejecutamos el comando rsync, especificando el puerto y usando una ruta de destino simplificada
-          rsync -avz --delete -e "ssh -p 65002" ./frontend/dist/ ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:public_html
-
-      # 8. PASO DE VERIFICACIÓN FINAL: Listar contenido de la carpeta remota 'public_html'
-      - name: DEBUG - List remote public_html directory contents
-        run: |
-          echo "Verificando contenido de la carpeta 'public_html' en el servidor..."
-          ssh -p 65002 ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} 'ls -la public_html'
+          # Usamos la ruta absoluta al directorio de destino para evitar ambigüedades.
+          # La estructura estándar de Hostinger es /home/USERNAME/domains/DOMAIN_NAME/public_html
+          rsync -avz --delete -e "ssh -p 65002" ./frontend/dist/ ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:/home/${{ secrets.FTP_USERNAME }}/domains/techmartel.com/public_html
 
 

@@ -23,7 +23,6 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
-          # CORRECCIÓN: Actualizamos la versión de Node.js a la 20, como requiere Vite.
           node-version: '20'
 
       # 3. Entra en la carpeta frontend e instala las dependencias
@@ -38,15 +37,18 @@ jobs:
           cd frontend
           npm run build
 
-      # 5. Sube los archivos compilados a Hostinger vía FTP
-      - name: Deploy to Hostinger via FTP
-        uses: SamKirkland/FTP-Deploy-Action@v4.3.4
+      # 5. Sube los archivos compilados a Hostinger vía SFTP
+      - name: Deploy to Hostinger via SFTP
+        uses: laryssamagalhaes/sftp-action@v1.0
         with:
           # Servidor, usuario y contraseña leídos desde los "Secrets" de GitHub
-          server: ${{ secrets.FTP_SERVER }}
+          host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
           password: ${{ secrets.FTP_PASSWORD }}
+          # Usamos el protocolo SFTP en el puerto estándar 22
+          protocol: 'sftp'
+          port: 22
           # Carpeta de origen en el robot: el resultado de la compilación
-          local-dir: ./frontend/dist/
+          local_path: './frontend/dist/'
           # Carpeta de destino en Hostinger: la raíz del sitio web
-          server-dir: ./public_html/
+          remote_path: './public_html'

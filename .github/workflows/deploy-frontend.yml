@@ -37,15 +37,16 @@ jobs:
           cd frontend
           npm run build
 
-      # 5. Sube los archivos compilados a Hostinger vía SFTP
+      # 5. Sube los archivos compilados a Hostinger vía SFTP con Clave SSH
       - name: Deploy to Hostinger via SFTP
-        # CORRECCIÓN DEFINITIVA: Volvemos a la herramienta SFTP estándar con una versión etiquetada.
+        # SOLUCIÓN FINAL: Usamos la herramienta estándar con autenticación por clave SSH
         uses: appleboy/sftp-action@v0.1.15
         with:
-          # Servidor, usuario y contraseña leídos desde los "Secrets" de GitHub
           host: ${{ secrets.FTP_SERVER }}
           username: ${{ secrets.FTP_USERNAME }}
-          password: ${{ secrets.FTP_PASSWORD }}
+          # Ya no usamos la contraseña, usamos la llave privada
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: 22 # Puerto estándar para SFTP
           source: 'frontend/dist/*' # Origen: Todo el contenido dentro de la carpeta dist
           target: 'public_html' # Destino: La raíz del sitio web en Hostinger
+

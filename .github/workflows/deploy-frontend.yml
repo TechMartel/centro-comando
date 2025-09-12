@@ -60,4 +60,10 @@ jobs:
           # Ejecutamos el comando rsync, especificando el puerto y usando una ruta de destino simplificada
           rsync -avz --delete -e "ssh -p 65002" ./frontend/dist/ ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:public_html
 
+      # 8. PASO DE VERIFICACIÓN FINAL: Listar contenido de la carpeta remota 'public_html'
+      - name: DEBUG - List remote public_html directory contents
+        run: |
+          echo "Verificando contenido de la carpeta 'public_html' en el servidor..."
+          ssh -p 65002 ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} 'ls -la public_html'
+
 

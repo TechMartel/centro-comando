@@ -37,15 +37,21 @@ jobs:
           cd frontend
           npm run build
 
-      # 5. Configura la clave SSH para la conexión
-      - name: Setup SSH
-        # Usamos una acción estándar para cargar nuestra clave privada de forma segura
-        uses: webfactory/ssh-agent@v0.9.0
-        with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+      # 5. Configura la clave SSH y añade el host a los hosts conocidos
+      - name: Setup SSH and Known Hosts
+        run: |
+          # Carga la clave SSH privada de forma segura
+          mkdir -p ~/.ssh/
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_rsa
+          chmod 600 ~/.ssh/id_rsa
+          # Añade la huella digital del servidor de Hostinger a la lista de hosts de confianza
+          # para evitar prompts interactivos. Usamos el puerto correcto 65002.
+          ssh-keyscan -p 65002 -H ${{ secrets.FTP_SERVER }} >> ~/.ssh/known_hosts
 
       # 6. Sube los archivos compilados a Hostinger vía rsync
       - name: Deploy to Hostinger via rsync
-        # Ejecutamos un comando directo de rsync, sin depender de acciones de terceros para el deploy
-        run: rsync -avz --delete ./frontend/dist/ ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:public_html
+        run: |
+          # Ejecutamos el comando rsync, especificando el puerto no estándar de Hostinger (65002)
+          rsync -avz --delete -e "ssh -p 65002" ./frontend/dist/ ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:public_html
+
 

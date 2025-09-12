@@ -48,16 +48,16 @@ jobs:
           # para evitar prompts interactivos. Usamos el puerto correcto 65002.
           ssh-keyscan -p 65002 -H ${{ secrets.FTP_SERVER }} >> ~/.ssh/known_hosts
 
-      # 6. PASO DE DEPURACIÓN: Listar contenido del directorio raíz en el servidor
-      - name: DEBUG - List remote root directory
+      # 6. PASO DE DEPURACIÓN 2: Listar contenido de la carpeta 'dist' local
+      - name: DEBUG - List local 'dist' directory contents
         run: |
-          echo "Listando contenido del directorio home del usuario..."
-          ssh -p 65002 ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }} 'ls -la'
+          echo "Listando contenido de ./frontend/dist/ ..."
+          ls -la ./frontend/dist/
 
       # 7. Sube los archivos compilados a Hostinger vía rsync
       - name: Deploy to Hostinger via rsync
         run: |
-          # Ejecutamos el comando rsync, especificando el puerto no estándar y una ruta de destino explícita (~)
-          rsync -avz --delete -e "ssh -p 65002" ./frontend/dist/ ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:~/public_html
+          # Ejecutamos el comando rsync, especificando el puerto y usando una ruta de destino simplificada
+          rsync -avz --delete -e "ssh -p 65002" ./frontend/dist/ ${{ secrets.FTP_USERNAME }}@${{ secrets.FTP_SERVER }}:public_html
 
 
